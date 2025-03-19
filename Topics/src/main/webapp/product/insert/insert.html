@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>新增產品</title>
+	<style>
+		body {
+    		text-align: center;
+		}
+
+		form {
+		    display: inline-block;
+		    text-align: left;
+		    padding: 20px;
+		    border: 1px solid #ccc;
+		    border-radius: 10px;
+		    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+		}
+	</style>
+</head>
+<body>
+	<form class="closestForm" method="post" action="../../ProductCRUD">
+			<h2>新增產品</h2>
+			<input type="hidden" name="actionType" value="insert">
+			輸入產品名稱 : <input type="text" name="product_name" /><p>
+			
+			產品描述 : <input type="text" name="product_des" /><p>
+			
+			價格 : <input type="text" name="price" /><p> 
+			庫存量 : <input type="text" name="stock" /><p>
+			分類 : <input type="text" name="category_name" /><p>
+			照片 : <input type="text" name="photo" /><p>
+			總星數 : <input type="text" name="total_star" /><p>
+			總評論數 : <input type="text" name="total_reviews" /><p>
+			
+			
+			<input type="submit" class="btnInsert" value="確定" />
+		</form>
+		
+		<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+				<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+				<script>
+
+					$(document).on("click", ".btnInsert", function (event) {
+						event.preventDefault();
+						// 先攔截表單，不要立即提交
+
+						let form = $(this).closest(".closestForm"); // 找到對應的表單
+
+						console.log("即將提交表單：", form);
+						Swal.fire({
+							title: "確定要新增嗎?",
+							text: "新增後將無法恢復!",
+							icon: "warning",
+							showCancelButton: true,
+							confirmButtonColor: "#d33",
+							cancelButtonColor: "#3085d6",
+							confirmButtonText: "確定新增",
+							cancelButtonText: "取消"
+						}).then(function (result) {
+							if (result.isConfirmed) { // 確認按鈕才送出
+								Swal.fire({
+									title: "已新增！",
+									text: "這筆紀錄已被新增~",
+									icon: "success",
+									timer: 2000, // 顯示2秒
+									showConfirmButton: false
+								}).then(function () {
+									form.submit();
+								});
+							}
+
+
+						})
+
+					});
+				</script>
+</body>
+</html>

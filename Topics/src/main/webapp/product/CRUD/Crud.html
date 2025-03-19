@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+    .main{
+    
+    	display:flex;
+    	
+        border: 1px solid #acd6ff;
+        border-radius: 15px;
+        margin: 15px;
+    }
+    
+    form{
+    	padding:10px;
+    	flex:none;
+    	width:200px;
+    }
+        
+	
+</style>
+<title>CRUD</title>
+</head>
+<body style="background-color:#fdf5e6">
+	<div class="main">
+		
+		<form method="post" action="../../ProductCRUD">
+			<h2>查詢單筆</h2>
+			<input type="hidden" name="actionType" value="getSingle">
+			輸入產品編號 : <input type="text" name="product_id" /><p>
+			<input type="submit" value="確定" />
+		</form>
+		
+		<hr>
+		<form method="post" action="../../ProductCRUD">
+			<h2>查詢全部</h2>
+			<input type="hidden" name="actionType" value="getAll">
+			<input type="submit" value="查詢" />
+		</form>
+		<hr>
+		<form method="post" action="../../ProductCRUD">
+			<h2>新增產品</h2>
+			<input type="hidden" name="actionType" value="insert">
+			輸入產品名稱 : <input type="text" name="product_name" /><p>
+			
+			產品描述 : <input type="text" name="product_des" /><p>
+			
+			價格 : <input type="text" name="price" /><p> 
+			庫存量 : <input type="text" name="stock" /><p>
+			分類 : <input type="text" name="category_name" /><p>
+			照片 : <input type="text" name="photo" /><p>
+			總星數 : <input type="text" name="total_star" /><p>
+			總評論數 : <input type="text" name="total_reviews" /><p>
+			
+			
+			<input type="submit" value="確定" />
+		</form>
+		<hr>
+		<form method="post" action="../../ProductCRUD">
+			<h2>刪除產品資料</h2>
+			<input type="hidden" name="actionType" value="delete">
+			輸入產品編號 : <input type="text" name="product_id" /><p>
+			<input type="submit" value="確定" />
+		</form>
+		<hr>
+		<form method="post" action="../../ProductCRUD">
+			<h2>修改產品資料</h2>
+			<input type="hidden" name="actionType" value="update">
+			輸入產品編號 : <input type="text" name="product_id" /><p>
+			<input type="submit" value="確定" />
+		</form>
+	</div>
+</body>
+</html>

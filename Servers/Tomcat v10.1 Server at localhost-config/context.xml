@@ -23,7 +23,7 @@
 		auth="Container"
 		username="william"
 		password="william"
-		driveClassName="com.microsoft.sqlserver.jdbc.SQLServerDriver"
+		driverClassName="com.microsoft.sqlserver.jdbc.SQLServerDriver"
 		url="jdbc:sqlserver://localhost:1433;databaseName=topics;encrypt=true;trustServerCertificate=true"
 	/>
 

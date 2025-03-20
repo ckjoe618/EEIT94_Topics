@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>EEIT94_第四組_貓狗大站</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			display: flex;
+			width: 100vw;
+			height: 100vh;
+			background-color: #f9f9f9;
+		}
+
+		.sidebar {
+			width: 250px;
+			height: 100vh;
+			background-color: #212121;
+			color: white;
+			padding: 20px;
+		}
+
+		.sidebar h2 {
+			user-select: none;
+			font-size: 28px;
+			margin-bottom: 20px;
+		}
+
+		.main-menu li {
+			list-style: none;
+			cursor: pointer;
+			user-select: none;
+			padding: 10px 0;
+		}
+
+		.main-menu li:hover {
+			background-color: #333;
+		}
+
+		.content {
+			flex: 1;
+			padding: 20px;
+			overflow-y: auto;
+		}
+
+		.header {
+			font-size: 24px;
+			margin-bottom: 20px;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="sidebar">
+		<h2>後臺管理中心</h2>
+		<ul class="main-menu">
+			<li id="member">會員管理</li>
+			<li id="order">訂單管理</li>
+			<li id="discuss">討論管理</li>
+			<li id="reserve">預約管理</li>
+			<li id="product">商品清單</li>
+		</ul>
+	</div>
+	<div class="content">
+		<div class="header">EEIT94_第四組</div>
+		<hr />
+	</div>
+	<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+	<script>
+		$(function () {
+			document.querySelectorAll(".sidebar ul li").forEach((item) => {
+				item.addEventListener("click", function (event) {
+					let section = event.target.id;
+					let content = document.querySelector(".content");
+
+					if (section === "member") {
+						content.innerHTML = `
+                                    <div class="header">會員管理</div>
+                                    <hr />
+                                    <iframe src= "/Topics/member/Member.jsp" width="100%" height="600px" style="border:none;"></iframe>
+                                    `;
+					}
+					if (section === "discuss") {
+						content.innerHTML = `
+                                    <div class="header">討論管理</div>
+                                    <hr />
+                                    <iframe src="../ArticleServlet" width="100%" height="600px" style="border:none;"></iframe>
+                                    `;
+					}
+					if (section === "product") {
+						content.innerHTML = `
+                                    <div class="header">商品管理</div>
+                                    <hr />
+                                    <iframe src="../ProductCRUD" width="100%" height="600px" style="border:none;"></iframe>
+                                    `;
+					}
+					if (section === "reserve") {
+						content.innerHTML = `
+                                    <div class="header">預約管理</div>
+                                    <hr />
+                                    <iframe src="../home/Appointment.jsp" width="100%" height="600px" style="border:none;"></iframe>
+                                    `;
+					}
+					if (section === "order") {
+						content.innerHTML = `
+                                    <div class="header">訂單管理</div>
+                                    <hr />
+                                    <iframe src="../OrderServlet" width="100%" height="600px" style="border:none;"></iframe>
+                                    `;
+					}
+				});
+			});
+		});
+	</script>
+</body>
+
+</html>

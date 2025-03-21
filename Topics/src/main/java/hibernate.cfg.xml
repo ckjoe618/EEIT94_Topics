@@ -9,14 +9,16 @@
 		<property name="hibernate.dialect">org.hibernate.dialect.SQLServerDialect</property>
 		
 		
+		
 		<!-- 
 		<property name="hibernate.connection.driver_class">com.microsoft.sqlserver.jdbc.SQLServerDriver</property>
-		<property name="hibernate.connection.password">P@ssw0rd</property>
+		<property name="hibernate.connection.password">william</property>
 		<property name="hibernate.connection.url">jdbc:sqlserver://localhost:1433;databaseName=topics;encrypt=true;trustServerCertificate=true</property>
-		<property name="hibernate.connection.username">watcher</property>
+		<property name="hibernate.connection.username">william</property>
 		<property name="hibernate.dialect">org.hibernate.dialect.SQLServerDialect</property>
-		
 		 -->
+		
+		
 		
 		<property name="hibernate.show_sql">true</property>
 		<property name="hibernate.format_sql">true</property>
@@ -24,6 +26,7 @@
 		
 		<!-- <mapping class="com.topics.member.model.bean.MemberBean" /> -->
 		<mapping class="com.topics.product.model.bean.ProdBean" />
+		<mapping class="com.topics.discuss.model.bean.ArticleBean" />
 
 	</session-factory>
 </hibernate-configuration> 

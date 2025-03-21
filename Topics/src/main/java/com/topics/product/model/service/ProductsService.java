@@ -25,10 +25,16 @@ public class ProductsService implements IProductsService {
 	public Boolean deleteOne(Integer product_id) {
 		return productsDAO.deleteOne(product_id);
 	}
-	public ProdBean insertOne(String product_name, String product_des, Integer price, Integer stock, String category_name, String photo, Integer total_star, Integer total_reviews) {
-		return productsDAO.insertOne(product_name, product_des, price, stock, category_name, photo, total_star, total_reviews);
+	public ProdBean insertOne(ProdBean prodBean) {
+		return productsDAO.insertOne(prodBean);
 	}
 	public ProdBean UpdateOne(Integer product_id, String product_name, String product_des, Integer price, Integer stock, String category_name, String photo, Integer total_star, Integer total_reviews) {
 		return productsDAO.UpdateOne(product_id, product_name, product_des, price, stock, category_name, photo, total_star, total_reviews);
+	}
+
+	@Override
+	public ProdBean insertOne(String product_name, String product_des, Integer price, Integer stock,
+			String category_name, String photo, Integer total_star, Integer total_reviews) {
+		return null;
 	}
 }

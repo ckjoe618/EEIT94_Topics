@@ -33,8 +33,6 @@ public class ProductCRUD extends HttpServlet {
 			actionType = "getAll";
 		}
 		System.out.println(actionType);
-//		String btnUpdate = request.getParameter("btnUpdate");
-//		String btnDelete = request.getParameter("btnDelete");
 		int product_id;
 		String product_name;
 		String product_des;
@@ -44,40 +42,9 @@ public class ProductCRUD extends HttpServlet {
 		String photo;
 		int total_star;
 		int total_reviews;
-//		float average_rating;
-		
-
-//		if("刪除".equals(btnDelete)) {
-//			product_id = Integer.parseInt(request.getParameter("deleteOne"));
-//			
-//			ProductsDAO.deleteOne(product_id);
-//			request.setAttribute("prods", ProductsDAO.getAll());
-//			request.getRequestDispatcher("/product/select/GetAllProds.jsp").forward(request, response);
-//		}
-		
-//		if("修改".equals(btnUpdate)){
-//			
-//			product_id = Integer.parseInt(request.getParameter("updateOne"));
-//			request.setAttribute("prod", ProductsDAO.getOne(product_id));
-//			request.getRequestDispatcher("/product/update/UpdateProd.jsp").forward(request, response);
-//			product_id = Integer.parseInt(request.getParameter("updateOne"));
-//			product_name = request.getParameter("product_name");
-//			product_des = request.getParameter("product_des");
-//			price = Integer.parseInt(request.getParameter("price"));
-//			stock = Integer.parseInt(request.getParameter("stock"));
-//			category_name = request.getParameter("category_name");
-//			photo = request.getParameter("photo");
-//			total_star = Integer.parseInt(request.getParameter("total_star"));
-//			total_reviews = Integer.parseInt(request.getParameter("total_reviews"));
-//		
-//			ProductsDAO.UpdateOne(product_id, product_name, product_des, price, stock, category_name, photo, total_star, total_reviews);
-//			request.setAttribute("prods", ProductsDAO.getAll());
-//			request.getRequestDispatcher("/product/select/GetAllProds.jsp").forward(request, response);
-//		}
-		
 		
 		try {
-			session.beginTransaction();
+//			session.beginTransaction();
 			IProductsService iProductsService = new ProductsService(session);
 			
 		switch(actionType) {
@@ -146,10 +113,10 @@ public class ProductCRUD extends HttpServlet {
 						break;
 				}
 			
-			session.getTransaction().commit();
+//			session.getTransaction().commit();
 			
 		} catch (Exception e) {
-			session.getTransaction().rollback();
+//			session.getTransaction().rollback();
 			e.printStackTrace();
 		}finally {
 //			HibernateUtil.closeSessionFactory();

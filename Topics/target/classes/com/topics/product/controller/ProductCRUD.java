@@ -14,6 +14,7 @@ import org.hibernate.SessionFactory;
 //import com.topics.dao.ProductsDAO;
 import com.topics.product.model.service.IProductsService;
 import com.topics.product.model.service.ProductsService;
+import com.topics.product.model.bean.*;
 import com.topics.util.HibernateUtil;
 
 @WebServlet("/ProductCRUD")
@@ -33,8 +34,7 @@ public class ProductCRUD extends HttpServlet {
 			actionType = "getAll";
 		}
 		System.out.println(actionType);
-//		String btnUpdate = request.getParameter("btnUpdate");
-//		String btnDelete = request.getParameter("btnDelete");
+
 		int product_id;
 		String product_name;
 		String product_des;
@@ -47,37 +47,11 @@ public class ProductCRUD extends HttpServlet {
 //		float average_rating;
 		
 
-//		if("刪除".equals(btnDelete)) {
-//			product_id = Integer.parseInt(request.getParameter("deleteOne"));
-//			
-//			ProductsDAO.deleteOne(product_id);
-//			request.setAttribute("prods", ProductsDAO.getAll());
-//			request.getRequestDispatcher("/product/select/GetAllProds.jsp").forward(request, response);
-//		}
-		
-//		if("修改".equals(btnUpdate)){
-//			
-//			product_id = Integer.parseInt(request.getParameter("updateOne"));
-//			request.setAttribute("prod", ProductsDAO.getOne(product_id));
-//			request.getRequestDispatcher("/product/update/UpdateProd.jsp").forward(request, response);
-//			product_id = Integer.parseInt(request.getParameter("updateOne"));
-//			product_name = request.getParameter("product_name");
-//			product_des = request.getParameter("product_des");
-//			price = Integer.parseInt(request.getParameter("price"));
-//			stock = Integer.parseInt(request.getParameter("stock"));
-//			category_name = request.getParameter("category_name");
-//			photo = request.getParameter("photo");
-//			total_star = Integer.parseInt(request.getParameter("total_star"));
-//			total_reviews = Integer.parseInt(request.getParameter("total_reviews"));
-//		
-//			ProductsDAO.UpdateOne(product_id, product_name, product_des, price, stock, category_name, photo, total_star, total_reviews);
-//			request.setAttribute("prods", ProductsDAO.getAll());
-//			request.getRequestDispatcher("/product/select/GetAllProds.jsp").forward(request, response);
-//		}
+
 		
 		
 		try {
-			session.beginTransaction();
+//			session.beginTransaction();
 			IProductsService iProductsService = new ProductsService(session);
 			
 		switch(actionType) {
@@ -109,16 +83,18 @@ public class ProductCRUD extends HttpServlet {
 						request.getRequestDispatcher("/product/select/GetAllProds.jsp").forward(request, response);
 						break;
 						
-					case "insert":				
-						product_name = request.getParameter("product_name");
-						product_des = request.getParameter("product_des");
-						price = Integer.parseInt(request.getParameter("price"));
-						stock = Integer.parseInt(request.getParameter("stock"));
-						category_name = request.getParameter("category_name");
-						photo = request.getParameter("photo");
-						total_star = Integer.parseInt(request.getParameter("total_star"));
-						total_reviews = Integer.parseInt(request.getParameter("total_reviews"));
-						iProductsService.insertOne(product_name, product_des, price, stock, category_name, photo, total_star, total_reviews);
+					case "insert":	
+						ProdBean product = new ProdBean();
+						product.setProduct_name(request.getParameter("product_name"));
+						product.setProduct_des(request.getParameter("product_des"));
+						product.setPrice(Integer.parseInt(request.getParameter("price")));
+						product.setStock(Integer.parseInt(request.getParameter("stock")));
+						product.setCategory_name(request.getParameter("category_name"));
+						product.setPhoto(request.getParameter("photo"));
+						product.setTotal_star(Integer.parseInt(request.getParameter("total_star")));
+						product.setTotal_review(Integer.parseInt(request.getParameter("total_reviews")));
+						product.setAverage_rating((float)(Math.round((float)Integer.parseInt(request.getParameter("total_star"))/Integer.parseInt(request.getParameter("total_reviews")) * 10.0) / 10.0));
+						iProductsService.insertOne(product);
 						
 						request.setAttribute("prods", iProductsService.getAll());
 						request.getRequestDispatcher("/product/select/GetAllProds.jsp").forward(request, response);
@@ -146,10 +122,10 @@ public class ProductCRUD extends HttpServlet {
 						break;
 				}
 			
-			session.getTransaction().commit();
+//			session.getTransaction().commit();
 			
 		} catch (Exception e) {
-			session.getTransaction().rollback();
+//			session.getTransaction().rollback();
 			e.printStackTrace();
 		}finally {
 //			HibernateUtil.closeSessionFactory();

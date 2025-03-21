@@ -49,11 +49,14 @@ public class ProductsDAO implements IProductsDAO {
 	}
 	
 	@Override
-	public ProdBean insertOne(String product_name, String product_des, Integer price, Integer stock, String category_name, String photo, Integer total_star, Integer total_reviews) {
-		ProdBean insertBean = new ProdBean(product_name, product_des, price, stock, category_name, photo, total_star, total_reviews);
-		insertBean.setAverage_rating((float)total_star/total_reviews);
-		session.persist(insertBean);
-		return insertBean;
+	public ProdBean insertOne(ProdBean prodBean) {
+		
+		if(prodBean != null) {
+			session.persist(prodBean);
+			return prodBean;			
+		}
+		
+		return null;
 		
 		
 		
@@ -72,7 +75,7 @@ public class ProductsDAO implements IProductsDAO {
 			resultBean.setStock(stock);
 			resultBean.setTotal_star(total_star);
 			resultBean.setTotal_review(total_reviews);
-			resultBean.setAverage_rating((float)total_star/total_reviews);
+			resultBean.setAverage_rating((float)(Math.round((float)total_star/total_reviews * 10.0) / 10.0));
 		}
 		
 		return resultBean;

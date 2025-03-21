@@ -21,11 +21,7 @@ import org.hibernate.SessionFactory;
 @WebServlet("/ArticleServlet")
 public class ArticleServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-//    private ArticleDAO articleDAO;
 
-//    SessionFactory factory = HibernateUtil.getSessionFactory();
-//    Session session = factory.getCurrentSession();
-//    IArticleService iArticleService = new ArticleService(session);
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");

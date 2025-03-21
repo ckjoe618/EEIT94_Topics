@@ -1,0 +1,41 @@
+package com.topics.appointment.model.bean;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
+
+@Entity @Table(name = "packages") 
+@Getter @Setter
+public class ServicePackage {
+	
+	
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) 
+    @Column(name = "PACKAGE_ID") 
+    private Integer packageId;
+
+    @Column(name = "PACKAGE_NAME", nullable = false, length = 10) 
+    private String packageName;
+
+    @Column(name = "PACKAGE_PRICE", nullable = false) 
+    private Double packagePrice;
+
+    @Column(name = "PACKAGE_DESCRIPTION", length = 20) 
+    private String packageDescription;
+    
+    public ServicePackage() {
+    }
+
+    public ServicePackage(String packageName, Double packagePrice,  String packageDescription) {
+        this.packageName = packageName;
+        this.packagePrice = packagePrice;
+        this.packageDescription = packageDescription;
+    }
+}

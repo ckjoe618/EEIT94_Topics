@@ -13,6 +13,7 @@
 		<property name="hibernate.current_session_context_class">thread</property>
 		
 		<mapping class="com.topics.member.model.bean.MemberBean" />
+		<mapping class="com.topics.order.model.bean.OrderBean" />
 
 	</session-factory>
 </hibernate-configuration> 

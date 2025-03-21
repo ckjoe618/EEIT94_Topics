@@ -10,5 +10,6 @@ public interface IProductsDAO {
 	public Boolean deleteOne(Integer product_id);
 	public ProdBean insertOne(String product_name, String product_des, Integer price, Integer stock, String category_name, String photo, Integer total_star, Integer total_reviews );
 	public ProdBean UpdateOne(Integer product_id, String product_name, String product_des, Integer price, Integer stock, String category_name, String photo, Integer total_star, Integer total_reviews);
+	ProdBean insertOne(ProdBean prodBean);
 	
 }

@@ -5,6 +5,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
+import com.topics.appointment.model.bean.Owner;
 import com.topics.appointment.model.bean.Pet;
 import com.topics.util.HibernateUtil;
 
@@ -42,7 +43,6 @@ public class PetDAO implements IPetDAO {
 	                      .getResultList();
 	    }
 	}
-
 
     // 獲取所有寵物
 	@Override

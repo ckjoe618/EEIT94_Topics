@@ -28,18 +28,12 @@ public class Appointment {
 	private int appointmentId;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "MEMBER_ID", referencedColumnName = "MEMBER_ID", insertable = false, updatable = false)
+	@JoinColumn(name = "MEMBER_ID", referencedColumnName = "MEMBER_ID", nullable = false)
 	private Owner owner;
 	
-	@Column(name = "MEMBER_ID")
-	private int memberId;
-	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "PET_ID", referencedColumnName = "PET_ID", insertable = false, updatable = false)
+	@JoinColumn(name = "PET_ID", referencedColumnName = "PET_ID", nullable = false)
 	private Pet pet;
-	
-	@Column(name = "PET_ID")
-	private int petId;
 	
 	@Column(name="APPOINTMENT_DATE")
 	private String appointmentDate;
@@ -67,29 +61,27 @@ public class Appointment {
 	
 	@OneToMany(mappedBy = "appointment", fetch = FetchType.LAZY)
     private List<PackageDetails> packages; 
-
-	public Appointment(int memberId, int petId, String appointmentDate, String appointmentTimeslot, int appointmentTotal, int appointmentStatus, int paymentStatus) {
-	    this.memberId = memberId;
-	    this.petId = petId;
-	    this.appointmentDate = appointmentDate;
-	    this.appointmentTimeslot = appointmentTimeslot;
-	    this.appointmentTotal = appointmentTotal;
-	    this.appointmentStatus = appointmentStatus;
-	    this.paymentStatus = paymentStatus;
-	}
-
-
-	public Appointment(int appointmentId,int memberId, int petId, String appointmentDate, String appointmentTimeslot, int appointmentTotal, int appointmentStatus, int paymentStatus) {
-		this.appointmentId = appointmentId;
-		this.memberId = memberId;
-	    this.petId = petId;
-	    this.appointmentDate = appointmentDate;
-	    this.appointmentTimeslot = appointmentTimeslot;
-	    this.appointmentTotal = appointmentTotal;
-	    this.appointmentStatus = appointmentStatus;
-	    this.paymentStatus = paymentStatus;
-	}
 	
-	public Appointment() {
+	public Appointment() {};
+
+	public Appointment(int appointmentId, Owner owner, Pet pet, String appointmentDate, String appointmentTimeslot, int appointmentTotal, int appointmentStatus, int paymentStatus) {
+        this.appointmentId = appointmentId;
+        this.owner = owner;
+        this.pet = pet;
+        this.appointmentDate = appointmentDate;
+        this.appointmentTimeslot = appointmentTimeslot;
+        this.appointmentTotal = appointmentTotal;
+        this.appointmentStatus = appointmentStatus;
+        this.paymentStatus = paymentStatus;
+    }
+	
+	public Appointment(Owner owner, Pet pet, String appointmentDate, String appointmentTimeslot, int appointmentTotal, int appointmentStatus, int paymentStatus) {
+		this.owner = owner;  
+	    this.pet=pet;
+	    this.appointmentDate = appointmentDate;
+	    this.appointmentTimeslot = appointmentTimeslot;
+	    this.appointmentTotal = appointmentTotal;
+	    this.appointmentStatus = appointmentStatus;
+	    this.paymentStatus = paymentStatus;
 	}
 }

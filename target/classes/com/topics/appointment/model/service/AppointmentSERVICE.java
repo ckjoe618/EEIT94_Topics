@@ -1,6 +1,7 @@
 package com.topics.appointment.model.service;
 
 
+import java.sql.SQLException;
 import java.util.List;
 
 import org.hibernate.SessionFactory;
@@ -40,7 +41,7 @@ public class AppointmentSERVICE implements IAppointmentSERVICE {
 	public Appointment getAppointmentById(int appointmentId){
 		return appointmentDAO.getAppointmentById(appointmentId);
 	}
-	public boolean updateAppointment(Appointment appointment, List<Integer> serviceIds, List<Integer> extraPackageIds) {
+	public boolean updateAppointment(Appointment appointment, List<Integer> serviceIds, List<Integer> extraPackageIds) throws SQLException {
 		return appointmentDAO.updateAppointment(appointment, serviceIds, extraPackageIds);
 	}
 	public ItemDetails getServiceById(int appointmentId){

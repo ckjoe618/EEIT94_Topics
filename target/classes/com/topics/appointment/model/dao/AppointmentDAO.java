@@ -15,6 +15,9 @@ import com.topics.appointment.model.bean.Pet;
 import com.topics.appointment.model.bean.ServicePackage;
 import com.topics.util.HibernateUtil;
 
+import jakarta.transaction.Transactional;
+
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -135,7 +138,7 @@ public class AppointmentDAO implements IAppointmentDAO {
 	@Override
 	public List<Appointment> searchAppointmentsByPhoneNumber(String phoneNumber) {
 	    List<Appointment> appointments = new ArrayList<>();
-	    String hql = "SELECT a.appointmentId, a.memberId, a.petId, a.appointmentDate, " +
+	    String hql = "SELECT a.appointmentId,a.owner.memberId, a.pet.petId, a.appointmentDate, " +
 	    			 "a.appointmentTimeslot, a.appointmentTotal, a.appointmentStatus, a.paymentStatus, " +
 	    			 "STRING_AGG(i.itemName, ', ') as serviceNames, " +
 	    	         "STRING_AGG(sp.packageDescription, ', ') as additionalPackages " +
@@ -147,7 +150,7 @@ public class AppointmentDAO implements IAppointmentDAO {
 	                 "LEFT JOIN PackageDetails pd ON pd.appointment = a " +
 	                 "LEFT JOIN ServicePackage sp ON sp.packageId = pd.servicePackage.packageId " + 
 	             "WHERE o.phoneNumber = :phoneNumber " +
-	             "GROUP BY a.appointmentId, a.memberId, a.petId, a.appointmentDate, " +
+	             "GROUP BY a.appointmentId, a.owner.memberId, a.pet.petId, a.appointmentDate, " +
 	             "a.appointmentTimeslot, a.appointmentTotal, a.appointmentStatus, a.paymentStatus";
 	    try (Session session = sessionFactory.openSession()) {
 	        Query query =session.createQuery(hql);
@@ -200,7 +203,7 @@ public class AppointmentDAO implements IAppointmentDAO {
 	public List<Appointment> getAllAppointments() {
 	    List<Appointment> appointments;
 
-	    String hql = "SELECT a.appointmentId, a.memberId, a.petId, a.appointmentDate, " +
+	    String hql = "SELECT a.appointmentId, a.owner.memberId, a.pet.petId, a.appointmentDate, " +
 	             "a.appointmentTimeslot, a.appointmentTotal, a.appointmentStatus, a.paymentStatus, " +
 	             "STRING_AGG(i.itemName, ', ') as serviceNames, " +
 	             "STRING_AGG(sp.packageDescription, ', ') as additionalPackages " +
@@ -209,7 +212,7 @@ public class AppointmentDAO implements IAppointmentDAO {
                  "LEFT JOIN Items i ON i = id.item " + 
                  "LEFT JOIN PackageDetails pd ON pd.appointment = a " +
                  "LEFT JOIN ServicePackage sp ON sp.packageId = pd.servicePackage.packageId " + 
-	             "GROUP BY a.appointmentId, a.memberId, a.petId, a.appointmentDate, " +
+	             "GROUP BY a.appointmentId, a.owner.memberId, a.pet.petId, a.appointmentDate, " +
 	             "a.appointmentTimeslot, a.appointmentTotal, a.appointmentStatus, a.paymentStatus";
 
 	    try (Session session = sessionFactory.openSession()) {
@@ -253,68 +256,77 @@ public class AppointmentDAO implements IAppointmentDAO {
             return session.get(Appointment.class, appointmentId);
         }
     }
-
-    // 更新預約
 	@Override
-	public boolean updateAppointment(Appointment appointment, List<Integer> serviceIds, List<Integer> extraPackageIds) {
+	public Owner getOwnerById(int memberId) {
 	    try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-	        Transaction transaction = session.beginTransaction();
-
-	        try {
-	            // 打印 memberId 以檢查是否正確
-	            System.out.println("Updating appointment with Member ID: " + appointment.getMemberId());
-	            
-	            // 檢查 memberId 是否有效
-	            Owner owner = session.get(Owner.class, appointment.getMemberId());
-	            if (owner == null) {
-	                throw new Exception("無效的會員 ID，請確認會員是否存在。");
-	            }
-
-	            session.update(appointment);  // 更新預約
-
-	            String deleteServiceHQL = "DELETE FROM ItemDetails WHERE appointment.appointmentId = :appointmentId";
-	            String deletePackageHQL = "DELETE FROM PackageDetails WHERE appointment.appointmentId = :appointmentId";
-	            session.createQuery(deleteServiceHQL).setParameter("appointmentId", appointment.getAppointmentId()).executeUpdate();
-	            session.createQuery(deletePackageHQL).setParameter("appointmentId", appointment.getAppointmentId()).executeUpdate();
-
-	            if (serviceIds != null) {
-	                for (int serviceId : serviceIds) {
-	                    Items item = session.get(Items.class, serviceId);
-	                    if (item != null) {
-	                        ItemDetails itemDetail = new ItemDetails();
-	                        itemDetail.setAppointment(appointment);
-	                        itemDetail.setItem(item);
-	                        itemDetail.setItemDetailQuantity(1);
-	                        session.saveOrUpdate(itemDetail);
-	                    }
-	                }
-	            }
-
-	            if (extraPackageIds != null) {
-	                for (int packageId : extraPackageIds) {
-	                    ServicePackage sPackage = session.get(ServicePackage.class, packageId);
-	                    if (sPackage != null) {
-	                        PackageDetails packageDetail = new PackageDetails();
-	                        packageDetail.setAppointment(appointment);
-	                        packageDetail.setServicePackage(sPackage);
-	                        packageDetail.setPackageDetailsQuantity(1);
-	                        session.saveOrUpdate(packageDetail);
-	                    }
-	                }
-	            }
-
-	            transaction.commit();
-	            return true;
-	        } catch (Exception e) {
-	            if (transaction != null) {
-	                transaction.rollback();
-	            }
-	            e.printStackTrace();
-	            return false;
-	        }
+	        return session.get(Owner.class, memberId);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return null;
 	    }
 	}
+	
+	@Override
+	public boolean updateAppointment(Appointment appointment, List<Integer> serviceIds, List<Integer> extraPackageIds) {
+	    Transaction transaction = null;
+	    try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+	        transaction = session.beginTransaction();
 
+	        // 更新預約資料
+	        session.update(appointment);
+
+	        // 刪除相關的服務
+	        Query deleteServicesQuery = session.createQuery("DELETE FROM ItemDetails WHERE appointment.id = :appointmentId");
+	        deleteServicesQuery.setParameter("appointmentId", appointment.getAppointmentId());
+	        deleteServicesQuery.executeUpdate();
+
+	        // 刪除相關的套餐
+	        Query deletePackagesQuery = session.createQuery("DELETE FROM PackageDetails WHERE appointment.id = :appointmentId");
+	        deletePackagesQuery.setParameter("appointmentId", appointment.getAppointmentId());
+	        deletePackagesQuery.executeUpdate();
+
+	     // 新增服務
+	        if (serviceIds != null) {
+	            for (int serviceId : serviceIds) {
+	                // 加載相應的 Item 實體
+	                Items item = session.get(Items.class, serviceId);  // Get the Items object using serviceId
+	                if (item != null) {
+	                    ItemDetails itemDetails = new ItemDetails();
+	                    itemDetails.setAppointment(appointment);  // 設定關聯
+	                    itemDetails.setItem(item);  // 設定服務
+	                    itemDetails.setItemDetailQuantity(1);  // 設定數量
+	                    session.save(itemDetails);  // 保存服務
+	                }
+	            }
+	        }
+
+	     // 新增套餐
+	        if (extraPackageIds != null) {
+	            for (int packageId : extraPackageIds) {
+	                // 加載相應的 ServicePackage 實體
+	                ServicePackage servicePackage = session.get(ServicePackage.class, packageId);  // Get the ServicePackage object
+	                if (servicePackage != null) {
+	                    PackageDetails packageDetails = new PackageDetails();
+	                    packageDetails.setAppointment(appointment);  // 設定關聯
+	                    packageDetails.setServicePackage(servicePackage);  // 設定套餐
+	                    packageDetails.setPackageDetailsQuantity(1);   // 設定數量
+	                    session.save(packageDetails);  // 保存套餐
+	                }
+	            }
+	        }
+
+
+	        transaction.commit();  // 提交交易
+
+	        return true;  // 更新成功
+	    } catch (Exception e) {
+	        if (transaction != null) {
+	            transaction.rollback();  // 回滾交易
+	        }
+	        e.printStackTrace();
+	        return false;  // 發生錯誤
+	    }
+	}
 
 
     

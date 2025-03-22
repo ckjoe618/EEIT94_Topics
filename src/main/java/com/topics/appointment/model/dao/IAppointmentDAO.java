@@ -1,9 +1,12 @@
 package com.topics.appointment.model.dao;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import com.topics.appointment.model.bean.Appointment;
 import com.topics.appointment.model.bean.ItemDetails;
+import com.topics.appointment.model.bean.Owner;
+import com.topics.appointment.model.bean.Pet;
 
 public interface IAppointmentDAO {
 	public int insertAppointment(Appointment appointment);
@@ -14,11 +17,12 @@ public interface IAppointmentDAO {
 	public boolean deleteAppointment(int appointmentId);
 	public List<Appointment> getAllAppointments();
 	public Appointment getAppointmentById(int appointmentId);
-	public boolean updateAppointment(Appointment appointment, List<Integer> serviceIds, List<Integer> extraPackageIds);
+	public boolean updateAppointment(Appointment appointment, List<Integer> serviceIds, List<Integer> extraPackageIds) throws SQLException;
 	public ItemDetails getServiceById(int appointmentId);
 	public List<String> getServicesByAppointmentId(int appointmentId);
 	public List<Integer> getSelectedExtraPackages(int appointmentId);
 	public boolean isServiceAlreadyAdded(int appointmentId, int serviceId);
 	public List<String> getBookedTimeslots(String date);
 	public boolean isTimeslotBooked(String appointmentDate, String appointmentTimeslot);
+	public Owner getOwnerById(int memberId);
 }

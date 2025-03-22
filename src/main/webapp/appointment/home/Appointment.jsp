@@ -8,6 +8,7 @@ SessionFactory sessionFactory = configuration.buildSessionFactory();
 AppointmentDAO appointmentDAO = new AppointmentDAO(sessionFactory);
 List<Appointment> appointments = appointmentDAO.getAllAppointments();
 %>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -20,8 +21,8 @@ List<Appointment> appointments = appointmentDAO.getAllAppointments();
 	rel="stylesheet">
 <script
 	src="https://cdn.jsdelivr.net/npm/sweetalert2@11.3.0/dist/sweetalert2.min.js"></script>
-
 <style>
+
 body {
 	display: flex;
 	width: 100vw;
@@ -196,13 +197,13 @@ button#openModalBtn:hover {
 		flex-direction: column;
 		align-items: stretch;
 	}
+	
 	#search-container button {
 		margin-left: 0;
 		margin-top: 10px;
 	}
 }
 </style>
-
 
 </head>
 <body>
@@ -259,7 +260,7 @@ button#openModalBtn:hover {
 			</form>
 		</div>
 	</div>
-
+	
 	<form method="post" action="../AppointmentServlet">
 		<div id="serviceList">
 			<%
@@ -313,12 +314,10 @@ button#openModalBtn:hover {
 						</form>
 					</td>
 					<td>
-						<form id="updateForm" action="" method="post"
-							style="display: inline;">
-							<input type="hidden" name="appointmentId"
-								value="<%=appointment.getAppointmentId()%>">
-							<button class="updatebtn insidebtn" type="button"
-								data-appointmentid="<%=appointment.getAppointmentId()%>">修改</button>
+						<form id="updateForm" action="" method="post" style="display: inline;">
+							<input type="hidden" name="appointmentId" value="<%=appointment.getAppointmentId()%>">
+							<input type="hidden" name="memberId" value="<%=appointment.getOwner().getMemberId()%>">
+							<button class="updatebtn insidebtn" type="button" data-appointmentid="<%=appointment.getAppointmentId()%>">修改</button>
 						</form>
 					</td>
 				</tr>

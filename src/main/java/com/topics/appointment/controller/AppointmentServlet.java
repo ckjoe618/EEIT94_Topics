@@ -17,6 +17,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import com.google.gson.Gson;
 import com.topics.appointment.model.bean.Appointment;
+import com.topics.appointment.model.bean.Owner;
 import com.topics.appointment.model.bean.Pet;
 import com.topics.appointment.model.dao.AppointmentDAO;
 import com.topics.appointment.model.dao.PetDAO;
@@ -67,13 +68,13 @@ public class AppointmentServlet extends HttpServlet {
 	    try {
 	        switch (action) {
 	            case "add":
-	                insertAppointmentById(request, response, appointmentDAO);
+	                insertAppointmentById(request, response, appointmentDAO,petDAO);
 	                break;
 	            case "delete":
 	                deleteAppointmentById(request, response, appointmentDAO);
 	                break;
 	            case "edit":
-	                updateAppointmentById(request, response, appointmentDAO);
+	                updateAppointmentById(request, response, appointmentDAO,petDAO);
 	                break;
 	            default:
 	                request.setAttribute("message", "無效的操作！");
@@ -139,7 +140,7 @@ public class AppointmentServlet extends HttpServlet {
 
 	// 新增預約
 	private void insertAppointmentById(HttpServletRequest request, HttpServletResponse response,
-	        AppointmentDAO appointmentDAO) throws SQLException, IOException, ServletException {
+	        AppointmentDAO appointmentDAO,PetDAO petDAO) throws SQLException, IOException, ServletException {
 
 	    String memberIdStr = request.getParameter("memberId");
 	    String petIdStr = request.getParameter("appointmentpetId");
@@ -181,7 +182,14 @@ public class AppointmentServlet extends HttpServlet {
 	        response.getWriter().write(gson.toJson(jsonResponse));
 	        return;
 	    }
-
+	    Owner owner = appointmentDAO.getOwnerById(memberId);
+		Pet pet = petDAO.getPetById(petId);
+	    if (owner == null) {
+	        jsonResponse.put("success", false);
+	        jsonResponse.put("message", "找不到對應的會員");
+	        response.getWriter().write(gson.toJson(jsonResponse));
+	        return;
+	    }
 	    if (appointmentDAO.isTimeslotBooked(appointmentDate, appointmentTimeslot)) {
 	        jsonResponse.put("success", false);
 	        jsonResponse.put("message", "該時段已被預約，請選擇其他時段！");
@@ -189,7 +197,7 @@ public class AppointmentServlet extends HttpServlet {
 	        return;
 	    }
 
-	    Appointment appointment = new Appointment(memberId, petId, appointmentDate, appointmentTimeslot, 0, 0, 0);
+	    Appointment appointment = new Appointment(owner, pet, appointmentDate, appointmentTimeslot, 0, 0, 0);
 	    int appointmentId = appointmentDAO.insertAppointment(appointment);
 	    int totalPrice = 0;
 
@@ -241,75 +249,90 @@ public class AppointmentServlet extends HttpServlet {
 		request.getRequestDispatcher("/appointment/home/Appointment.jsp").forward(request, response);
 	}
 
-	// 修改預約
 	private void updateAppointmentById(HttpServletRequest request, HttpServletResponse response,
-			AppointmentDAO appointmentDAO) throws SQLException, IOException, ServletException {
-		
-		try {
-			String appointmentIdParam = request.getParameter("appointmentId");
-			String appointmentStatusParam = request.getParameter("appointmentStatus");
-			String paymentStatusParam = request.getParameter("paymentStatus");
+	        AppointmentDAO appointmentDAO, PetDAO petDAO) throws SQLException, IOException, ServletException {
+	    try {
+	        // Retrieve and validate parameters
+	        String appointmentIdParam = request.getParameter("appointmentId");
+	        String appointmentStatusParam = request.getParameter("appointmentStatus");
+	        String paymentStatusParam = request.getParameter("paymentStatus");
 
-			if (appointmentIdParam == null || appointmentIdParam.isEmpty()) {
-				request.setAttribute("errorMessage", "預約 ID 不能為空。");
-				request.getRequestDispatcher("/appointment/home/Appointment.jsp").forward(request, response);
-				return;
-			}
+	        if (appointmentIdParam == null || appointmentIdParam.isEmpty()) {
+	            request.setAttribute("errorMessage", "預約 ID 不能為空。");
+	            request.getRequestDispatcher("/appointment/home/Appointment.jsp").forward(request, response);
+	            return;
+	        }
 
-			int appointmentId = Integer.parseInt(appointmentIdParam);
+	        int appointmentId = Integer.parseInt(appointmentIdParam);
+	        
+	        int appointmentStatus = (appointmentStatusParam != null && !appointmentStatusParam.isEmpty())
+	                ? Integer.parseInt(appointmentStatusParam)
+	                : 0;
+	        int paymentStatus = (paymentStatusParam != null && !paymentStatusParam.isEmpty())
+	                ? Integer.parseInt(paymentStatusParam)
+	                : 0;
 
-			int appointmentStatus = (appointmentStatusParam != null && !appointmentStatusParam.isEmpty())
-					? Integer.parseInt(appointmentStatusParam)
-					: 0;
-			int paymentStatus = (paymentStatusParam != null && !paymentStatusParam.isEmpty())
-					? Integer.parseInt(paymentStatusParam)
-					: 0;
+	        // Fetch additional parameters
+	        String appointmentDate = request.getParameter("appointmentDate");
+	        String timeSlot = request.getParameter("timeSlot");
 
-			String appointmentDate = request.getParameter("appointmentDate");
-			String timeSlot = request.getParameter("timeSlot");
+	        if (appointmentDate == null || appointmentDate.isEmpty()) {
+	            request.setAttribute("errorMessage", "預約日期不能為空。");
+	            request.getRequestDispatcher("/appointment/home/Appointment.jsp").forward(request, response);
+	            return;
+	        }
+	        if (timeSlot == null || timeSlot.isEmpty()) {
+	            request.setAttribute("errorMessage", "預約時段不能為空。");
+	            request.getRequestDispatcher("/appointment/home/Appointment.jsp").forward(request, response);
+	            return;
+	        }
 
-			if (appointmentDate == null || appointmentDate.isEmpty()) {
-				request.setAttribute("errorMessage", "預約日期不能為空。");
-				request.getRequestDispatcher("/appointment/home/Appointment.jsp").forward(request, response);
-				return;
-			}
-			if (timeSlot == null || timeSlot.isEmpty()) {
-				request.setAttribute("errorMessage", "預約時段不能為空。");
-				request.getRequestDispatcher("/appointment/home/Appointment.jsp").forward(request, response);
-				return;
-			}
+	        // Calculate total price and get associated pet and owner information
+	        int totalPrice = calculateTotalPrice(request);
+	        int memberId = Integer.parseInt(request.getParameter("memberId"));
+	        int petId = Integer.parseInt(request.getParameter("petId"));
+	        Owner owner = appointmentDAO.getOwnerById(memberId);
+	        Pet pet = petDAO.getPetById(petId);
 
-			int totalPrice = calculateTotalPrice(request);
+	        if (owner == null || pet == null) {
+	            request.setAttribute("errorMessage", "無效的會員或寵物 ID，請確認它們是否存在。");
+	            request.getRequestDispatcher("/appointment/home/Appointment.jsp").forward(request, response);
+	            return;
+	        }
 
-			Appointment updatedAppointment = new Appointment();
-			updatedAppointment.setAppointmentId(appointmentId);
-			updatedAppointment.setAppointmentDate(appointmentDate);
-			updatedAppointment.setAppointmentTimeslot(timeSlot);
-			updatedAppointment.setAppointmentTotal(totalPrice);
-			updatedAppointment.setAppointmentStatus(appointmentStatus);
-			updatedAppointment.setPaymentStatus(paymentStatus);
+	        // Prepare Appointment object to update
+	        Appointment updatedAppointment = new Appointment();
+	        updatedAppointment.setAppointmentId(appointmentId);
+	        updatedAppointment.setAppointmentDate(appointmentDate);
+	        updatedAppointment.setAppointmentTimeslot(timeSlot);
+	        updatedAppointment.setAppointmentTotal(totalPrice);
+	        updatedAppointment.setAppointmentStatus(appointmentStatus);
+	        updatedAppointment.setPaymentStatus(paymentStatus);
+	        updatedAppointment.setOwner(owner);
+	        updatedAppointment.setPet(pet);
 
-			List<Integer> serviceIds = getSelectedIds(request.getParameterValues("services"));
-			List<Integer> extraPackageIds = getSelectedIds(request.getParameterValues("extraPackages"));
-			List<Integer> appointmentPackages = appointmentDAO.getSelectedExtraPackages(appointmentId);
-	        request.setAttribute("appointmentpackages", appointmentPackages);
-			boolean success = appointmentDAO.updateAppointment(updatedAppointment, serviceIds, extraPackageIds);
+	        // Get selected services and packages
+	        List<Integer> serviceIds = getSelectedIds(request.getParameterValues("services"));
+	        List<Integer> extraPackageIds = getSelectedIds(request.getParameterValues("extraPackages"));
 
-			if (success) {
-				request.setAttribute("appointmentId", appointmentId);
-				request.setAttribute("totalPrice", totalPrice);
-				request.setAttribute("successMessage", "預約更新成功！總價為: " + totalPrice + "元");
-				request.getRequestDispatcher("/appointment/result/Appointment.jsp").forward(request, response);
-
-			} else {
-				request.setAttribute("errorMessage", "更新失敗，請檢查預約 ID 是否正確。");
-				request.getRequestDispatcher("/appointment/home/Appointment.jsp").forward(request, response);
-			}
-		} catch (NumberFormatException e) {
-			request.setAttribute("errorMessage", "無效的數字格式。請檢查您輸入的預約 ID、預約狀態或付款狀態。");
-			request.getRequestDispatcher("/appointment/home/Appointment.jsp").forward(request, response);
-		}
+	        // Try to update the appointment
+	        try {
+	            appointmentDAO.updateAppointment(updatedAppointment, serviceIds, extraPackageIds);
+	            request.setAttribute("appointmentId", appointmentId);
+	            request.setAttribute("totalPrice", totalPrice);
+	            request.setAttribute("successMessage", "預約更新成功！總價為: " + totalPrice + "元");
+	            request.getRequestDispatcher("/appointment/result/Appointment.jsp").forward(request, response);
+	        } catch (Exception e) {
+	            request.setAttribute("errorMessage", "更新預約時出現錯誤：" + e.getMessage());
+	            request.getRequestDispatcher("/appointment/home/Appointment.jsp").forward(request, response);
+	        }
+	    } catch (NumberFormatException e) {
+	        // Handle invalid number format exception
+	        request.setAttribute("errorMessage", "無效的數字格式。請檢查您輸入的預約 ID、預約狀態或付款狀態。");
+	        request.getRequestDispatcher("/appointment/home/Appointment.jsp").forward(request, response);
+	    }
 	}
+
 
 	// 計算總價
 	private int calculateTotalPrice(HttpServletRequest request) {

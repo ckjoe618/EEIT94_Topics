@@ -1,5 +1,6 @@
 package com.topics.appointment.model.service;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import com.topics.appointment.model.bean.Appointment;
@@ -14,7 +15,7 @@ public interface IAppointmentSERVICE {
 	public boolean deleteAppointment(int appointmentId);
 	public List<Appointment> getAllAppointments();
 	public Appointment getAppointmentById(int appointmentId);
-	public boolean updateAppointment(Appointment appointment, List<Integer> serviceIds, List<Integer> extraPackageIds);
+	public boolean updateAppointment(Appointment appointment, List<Integer> serviceIds, List<Integer> extraPackageIds)  throws SQLException;
 	public ItemDetails getServiceById(int appointmentId);
 	public List<String> getServicesByAppointmentId(int appointmentId);
 	public List<Integer> getSelectedExtraPackages(int appointmentId);

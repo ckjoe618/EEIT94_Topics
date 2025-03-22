@@ -5,9 +5,11 @@
 
 <%
     String appointmentId = request.getParameter("appointmentId");
+    String memberId = request.getParameter("memberId");
 
-    if (appointmentId == null || appointmentId.isEmpty()) {
-        request.setAttribute("errorMessage", "預約 ID 無效");
+    // 驗證 appointmentId 和 memberId 是否有效
+    if (appointmentId == null || appointmentId.isEmpty() || memberId == null || memberId.isEmpty()) {
+        request.setAttribute("errorMessage", "預約 ID 或 會員 ID 無效");
         request.getRequestDispatcher("/appointment/error/appointment.jsp").forward(request, response);
         return;
     }
@@ -16,28 +18,37 @@
     ItemDetails itemdetails = null;
     List<Integer> appointmentpackages = null;
 
-    // 不依賴ServletContext中的sessionFactory，直接獲取
+    // 使用 HibernateUtil 獲取 SessionFactory
     SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-
     if (sessionFactory == null) {
         request.setAttribute("errorMessage", "SessionFactory not found.");
         request.getRequestDispatcher("/appointment/error/appointment.jsp").forward(request, response);
         return;
     }
 
-    // 確保Session存在
-    Session userSession = (Session) request.getAttribute("session");
-
-    if (userSession == null) {
-        userSession = sessionFactory.openSession();  // 創建新的Session
-    }
-
-    try {
+    // 使用 try-with-resources 自動關閉 Session
+    try (Session userSession = sessionFactory.openSession()) {
         AppointmentDAO appointmentDAO = new AppointmentDAO(sessionFactory);
 
+        // 獲取 Appointment 對象
         appointment = userSession.get(Appointment.class, Integer.parseInt(appointmentId));
+
+        if (appointment == null) {
+            request.setAttribute("errorMessage", "找不到該預約記錄");
+            request.getRequestDispatcher("/appointment/error/appointment.jsp").forward(request, response);
+            return;
+        }
+
+        // 獲取 ItemDetails
         itemdetails = userSession.get(ItemDetails.class, Integer.parseInt(appointmentId));
+
+        // 取得額外服務包
         appointmentpackages = appointmentDAO.getSelectedExtraPackages(Integer.parseInt(appointmentId));
+
+        // 將數據放入 request
+        request.setAttribute("appointment", appointment);
+        request.setAttribute("itemdetails", itemdetails);
+        request.setAttribute("appointmentpackages", appointmentpackages);
 
     } catch (Exception e) {
         e.printStackTrace();
@@ -46,6 +57,7 @@
         return;
     }
 %>
+
 
 
 

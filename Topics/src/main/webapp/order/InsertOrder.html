@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>訂單管理</title>
+<style>
+	* {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        /* font-family: Arial, sans-serif; */
+      }
+      body {
+        display: flex;
+        width: 100vw;
+        height: 100vh;
+        background-color: #f9f9f9;
+      }
+      .content {
+        /* flex-grow ｜ flex-shrink ｜ flex-basis: 1 1 0%; */
+        flex: 1;
+        padding: 20px;
+        overflow-y: auto;
+      }
+      .header {
+        font-size: 24px;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+	.Msg{
+		color: red;
+		font-size: 12px;
+	}
+	table{
+		margin-top: 50px;
+	}
+</style>
+</head>
+<body>
+    <div align="center" class="content">
+		<div class="header">新增訂單</div>
+		
+		<form method="post" action="../OrderServlet" id="form">
+			<table>
+				<tr><td>會員編號：</td>
+					<td><input type="text" name="memberid" id="memberid" placeholder="必填" required/>
+						<span id=mbMsg class="Msg"></span></td></tr>
+				<tr><td>訂單金額：</td>
+					<td><input type="text" name="totalprice" id="totalprice" placeholder="必填" required/>
+						<span id=ttpMsg class="Msg"></span></td></tr>
+				<tr><td>付款方式：</td>
+					<td><label><input type="radio" name="paymentmethod" value="信用卡" class="radio" checked> 信用卡</label>
+						<label><input type="radio" name="paymentmethod" value="貨到付款" class="radio"> 貨到付款</label></td></tr>
+				
+				<tr><td><label for="paymentstatus">付款狀態：</label></td>
+					<td><select id="paymentstatus" name="paymentstatus">
+    					<option value="待付款">待付款</option>
+    					<option value="已付款">已付款</option>
+    					<option value="付款失敗">付款失敗</option>
+						</select></td></tr>
+				
+				<tr><td><label for="orderstatus">訂單狀態：</label></td>
+					<td><select id="orderstatus" name="orderstatus">
+    					<option value="訂單已成立">訂單已成立</option>
+    					<option value="備貨中">備貨中</option>
+    					<option value="已出貨">已出貨</option>
+    					<option value="已送達">已送達</option>
+    					<option value="退貨中">退貨中</option>
+    					<option value="退貨完成">退貨完成</option>
+    					<option value="訂單取消">訂單取消</option>
+						</select></td></tr>
+		
+				<tr><td>取貨方式：</td>
+					<td><label><input type="radio" name="pickupmethod" value="宅配" class="radio" checked> 宅配</label>
+						<label><input type="radio" name="pickupmethod" value="超商取貨" class="radio"> 超商取貨</label></td></tr>
+	
+				<tr><td>物流編號：</td>
+					<td><input type="text" name="trackingno" id="trackingno" placeholder="選填">
+						<span id="trckMsg" class="Msg"></span></td></tr>
+					
+				<tr><td></td></tr>
+				
+				<tr><td colspan="2" style="text-align: center;padding: 20px;">
+						<input type="hidden" value="insert" name="action"/>
+						<input style="padding:3px;" type="submit" value="確定" id="submit"/>
+						<input style="padding:3px;" type="button" value="返回" onclick="history.back();" /></td></tr>
+						
+				<tr><td colspan="2" style="text-align: center;"><span id=subMsg class="Msg"></span></td></tr>
+			</table>
+		</form>
+	</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+	$("#orderstatus").on("change", function(){
+		let selectedValue = $(this).val();
+		if(selectedValue==="已出貨" || selectedValue==="已送達" || selectedValue==="退貨中" || selectedValue==="退貨完成"){
+			$("#trackingno").attr("required", true);
+			$("#trackingno").attr("placeholder", "必填");
+		}else{
+			$("#trackingno").removeAttr("required");
+			$("#trackingno").attr("placeholder", "選填");
+		}
+	})
+	//資料驗證
+	let memberidrule = /^[0-9]{1,3}$/;
+	let totalpricerule = /^[0-9]+$/;
+	let trackingnorule = /^[0-9]{10}$/;
+	$("#memberid").on("input", function(){
+		if(!memberidrule.test($(this).val())){
+			$("#mbMsg").text("會員編號請輸入1至3位數字");
+		}else{
+			$("#mbMsg").text("");
+		}
+	})
+	$("#totalprice").on("input", function(){
+		if(!totalpricerule.test($(this).val())){
+			$("#ttpMsg").text("訂單金額請輸入數字");
+		}else{
+			$("#ttpMsg").text("");
+		}
+	})
+	$("#trackingno").on("input", function(){
+		if(!trackingnorule.test($(this).val())){
+			$("#trckMsg").text("物流編號為10位數字");
+		}else{
+			$("#trckMsg").text("");
+		}
+	})
+	$("#form").submit(function(event){
+		if(memberidrule.test($("#memberid").val()) &&
+				totalpricerule.test($("#totalprice").val())){
+			$("#subMsg").text("");
+			this.submit();
+		}else{
+			$("#subMsg").text("請確認輸入格式");
+			event.preventDefault();
+		}
+	})
+</script>
+</body>
+</html>

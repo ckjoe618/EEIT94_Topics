@@ -1,29 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE hibernate-configuration PUBLIC
-		"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
-		"http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
 	<session-factory>
 
-	 	<property name="hibernate.connection.datasource">java:comp/env/connectSQLServerJndi</property>
+		<property name="hibernate.connection.datasource">java:comp/env/connectSQLServerTopics</property>
 		<property name="hibernate.dialect">org.hibernate.dialect.SQLServerDialect</property>
-		
-		
-		<!-- 
-		<property name="hibernate.connection.driver_class">com.microsoft.sqlserver.jdbc.SQLServerDriver</property>
-		<property name="hibernate.connection.password">P@ssw0rd</property>
-		<property name="hibernate.connection.url">jdbc:sqlserver://localhost:1433;databaseName=topics;encrypt=true;trustServerCertificate=true</property>
-		<property name="hibernate.connection.username">watcher</property>
-		<property name="hibernate.dialect">org.hibernate.dialect.SQLServerDialect</property>
-		
-		 -->
-		
+
 		<property name="hibernate.show_sql">true</property>
 		<property name="hibernate.format_sql">true</property>
 		<property name="hibernate.current_session_context_class">thread</property>
-		
-		<!-- <mapping class="com.topics.member.model.bean.MemberBean" /> -->
+
+		<mapping class="com.topics.member.model.bean.MemberBean" />
 		<mapping class="com.topics.product.model.bean.ProdBean" />
+		<mapping class="com.topics.order.model.bean.OrderBean" />
+		<mapping class="com.topics.discuss.model.bean.ArticleBean" />
+		<mapping class="com.topics.appointment.model.bean.Appointment" />
+		<mapping class="com.topics.appointment.model.bean.ItemDetails" />
+		<mapping class="com.topics.appointment.model.bean.Items" />
+		<mapping class="com.topics.appointment.model.bean.PackageDetails" />
+		<mapping class="com.topics.appointment.model.bean.ServicePackage" />
+		<mapping class="com.topics.appointment.model.bean.Pet" />
+		<mapping class="com.topics.appointment.model.bean.Owner" />
 
 	</session-factory>
 </hibernate-configuration> 

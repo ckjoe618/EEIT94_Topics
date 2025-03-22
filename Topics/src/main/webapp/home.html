@@ -65,7 +65,7 @@
     </div>
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script>
-      $(function () {
+      $(function () {    	  
         document.querySelectorAll(".sidebar ul li").forEach((item) => {
           item.addEventListener("click", function (event) {
             let section = event.target.id;
@@ -75,35 +75,35 @@
               content.innerHTML = `
                                     <div class="header">會員管理</div>
                                     <hr />
-                                    <iframe src="../MemberServlet" width="100%" height="600px" style="border:none;"></iframe>
+                                    <iframe src= "/Topics/member/Member.jsp" width="100%" height="600px" style="border:none;"></iframe>
                                     `;
             }
             if (section === "discuss") {
               content.innerHTML = `
                                     <div class="header">討論管理</div>
                                     <hr />
-                                    <iframe src="../ArticleServlet" width="100%" height="600px" style="border:none;"></iframe>
+                                    <iframe src="/Topics/ArticleServlet" width="100%" height="600px" style="border:none;"></iframe>
                                     `;
             }
             if (section === "product") {
               content.innerHTML = `
                                     <div class="header">商品管理</div>
                                     <hr />
-                                    <iframe src="http://localhost:8080/Topics/ProductCRUD" width="100%" height="600px" style="border:none;"></iframe>
+                                    <iframe src="/Topics/ProductCRUD" width="100%" height="600px" style="border:none;"></iframe>
                                     `;
             }
             if (section === "reserve") {
               content.innerHTML = `
                                     <div class="header">預約管理</div>
                                     <hr />
-                                    <iframe src="../home/Appointment.jsp" width="100%" height="600px" style="border:none;"></iframe>
+                                    <iframe src="/Topics/appointment/home/Appointment.jsp" width="100%" height="600px" style="border:none;"></iframe>
                                     `;
             }
             if (section === "order") {
               content.innerHTML = `
                                     <div class="header">訂單管理</div>
                                     <hr />
-                                    <iframe src="../OrderServlet" width="100%" height="600px" style="border:none;"></iframe>
+                                    <iframe src="/Topics/OrderServlet" width="100%" height="600px" style="border:none;"></iframe>
                                     `;
             }
           });

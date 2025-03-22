@@ -12,7 +12,7 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.annotation.WebFilter;
 
-@WebFilter(urlPatterns = "/user/")
+@WebFilter(urlPatterns = "/*")
 public class OpenSessionViewFilter implements Filter {
 
 	@Override
@@ -33,7 +33,7 @@ public class OpenSessionViewFilter implements Filter {
 			session.getTransaction().rollback();
 			System.out.println("Transaction Rollback");
 		} finally {
-			System.out.println("Session Closed");
+			System.out.println("Transaction Closed");
 		}
 		
 	}

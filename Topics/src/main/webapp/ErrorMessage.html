@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>錯誤發生 Error</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ECF5FF;
+            text-align: center;
+            padding: 50px;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+        }
+        h1 {
+            color: #2F0000;
+        }
+        p {
+            color: #2F0000;
+        }
+        .error-code {
+            font-size: 50px;
+            font-weight: bold;
+            color: 	#2F0000;
+        }
+        .btn {
+            background-color: #97CBFF;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+            border-radius: 5px;
+        }
+        .btn:hover {
+            background-color: #46A3FF;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="error-code">Error</div>
+        <h1>喔哦！發生錯誤</h1>
+        <p>系統出現異常，請稍後再試。</p>
+        <button class="btn" onclick="window.history.back();">返回上一頁</button>
+    </div>
+</body>
+</html>

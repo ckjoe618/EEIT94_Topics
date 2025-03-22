@@ -19,26 +19,26 @@ public class MemberService {
 		memberDao.insertMember(member);
 	}
 	
-//	public void deleteMemberById(int id) {
-//		memberDao.deleteMemberById(id);
-//	}
-//	
-//	public void updateMemberById(MemberBean member) {
-//		memberDao.updateMemberById(member);
-//	}
-//	
-//	public MemberBean selectMemberById(int id) {
-//		return memberDao.selectMemberById(id);
-//	}
-//	
-//	public MemberBean selectMemberByAccount(String account) {
-//		return memberDao.selectMemberByAccount(account);
-//	}
-//	
-//	public MemberBean selectMemberByIdno(String idno) {
-//		return memberDao.selectMemberByAccount(idno);
-//	}
-//	
+	public void deleteMemberById(int id) {
+		memberDao.deleteMemberById(id);
+	}
+	
+	public void updateMemberById(MemberBean member) {
+		memberDao.updateMemberById(member);
+	}
+	
+	public MemberBean selectMemberById(int id) {
+		return memberDao.selectMemberById(id);
+	}
+	
+	public MemberBean selectMemberByAccount(String account) {
+		return memberDao.selectMemberByAccount(account);
+	}
+	
+	public MemberBean selectMemberByIdno(String idno) {
+		return memberDao.selectMemberByIdno(idno);
+	}
+	
 	public List<MemberBean> selectMember() {
 		return memberDao.selectMember();
 	}

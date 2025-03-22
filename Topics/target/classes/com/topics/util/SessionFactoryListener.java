@@ -19,5 +19,4 @@ public class SessionFactoryListener implements ServletContextListener {
 		System.out.println("Session Factory Created");
 	}
 
-	
 }

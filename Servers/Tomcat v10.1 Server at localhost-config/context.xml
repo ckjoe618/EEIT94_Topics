@@ -17,15 +17,20 @@
 --><!-- The contents of this file will be loaded for each web application -->
 <Context>
 
-	<Resource
-		name="connectSQLServerJndi"
-		type="javax.sql.DataSource"
-		auth="Container"
-		username="william"
-		password="william"
-		driverClassName="com.microsoft.sqlserver.jdbc.SQLServerDriver"
-		url="jdbc:sqlserver://localhost:1433;databaseName=topics;encrypt=true;trustServerCertificate=true"
-	/>
+	<Resource 
+       name="connectSQLServerTopics"
+       type="javax.sql.DataSource"
+       auth="Container"
+       username="william"
+       password="william"
+       driverClassName="com.microsoft.sqlserver.jdbc.SQLServerDriver" 
+       url="jdbc:sqlserver://localhost:1433;databaseName=topics;encrypt=true;trustServerCertificate=true"
+       initialSize="5"
+       maxIdle="5"
+       maxTotal="8"
+       maxWaitMillis="-1"
+       poolPreparedStatements="true"
+       validationQuery="select 1" />
 
     <!-- Default set of monitored resources. If one of these changes, the    -->
     <!-- web application will be reloaded.                                   -->

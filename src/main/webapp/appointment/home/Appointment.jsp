@@ -1,6 +1,7 @@
 <%@ page import="java.sql.*,com.topics.appointment.model.bean.*,com.topics.appointment.model.dao.AppointmentDAO,org.hibernate.SessionFactory, org.hibernate.cfg.Configuration, org.hibernate.Session,java.util.List,java.util.HashSet,java.util.Set"%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
+
 <%
 Configuration configuration = new Configuration();
 configuration.configure("hibernate.cfg.xml");
@@ -16,11 +17,8 @@ List<Appointment> appointments = appointmentDAO.getAllAppointments();
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>寵物美容預約系統</title>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<link
-	href="https://cdn.jsdelivr.net/npm/sweetalert2@11.3.0/dist/sweetalert2.min.css"
-	rel="stylesheet">
-<script
-	src="https://cdn.jsdelivr.net/npm/sweetalert2@11.3.0/dist/sweetalert2.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.3.0/dist/sweetalert2.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.3.0/dist/sweetalert2.min.js"></script>
 <style>
 
 body {
@@ -204,7 +202,6 @@ button#openModalBtn:hover {
 	}
 }
 </style>
-
 </head>
 <body>
 	<div class="header">預約列表</div>
@@ -216,7 +213,6 @@ button#openModalBtn:hover {
 
 			<button type="submit" id="submitBtn" disabled>查詢</button>
 		</form>
-
 	</div>
 	<div id="orderModal" class="modal">
 		<div class="modal-content">
@@ -228,20 +224,17 @@ button#openModalBtn:hover {
 				會員 ID<input type="number" id="memberId" name="memberId" required><br>
 				 
 				 寵物:<select id="appointmentpetId" name="appointmentpetId" required="">
-    <option value="" disabled selected>請選擇寵物</option>
-</select>
-
-            </select><br>
-            
+   				 <option value="" disabled selected>請選擇寵物</option>
+					</select>
+            	<br>
 				<label for="appointmentDate">
 				預約日期:</label> <input type="date" id="appointmentDate" name="appointmentDate" required><br>
-				
 				<label for="appointmentTimeslot">
 				預約時段:</label> <select id="appointmentTimeslot" name="appointmentTimeslot" required>
 					<option value="" disabled selected>請選擇時段</option>
 				</select><br> 
 				
-				選擇服務: <select name="services" id="serviceSelect">
+				選擇服務: <select name="services" id="serviceSelect" >
 					<option value="" disabled selected>請選擇服務</option>
 					<option value="1" data-price="1000">基礎洗澡 +1000元</option>
 					<option value="2" data-price="2000">基礎洗護含美容修剪 +2000元</option>
@@ -333,13 +326,11 @@ button#openModalBtn:hover {
 			}
 			%>
 		</div>
-
 	</form>
 
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function () {
-        // Validate phone number input
         $("#phone_number").on("input", function () {
             let phoneInput = this.value; 
             let errorMsg = $("#nameError");
@@ -357,23 +348,19 @@ button#openModalBtn:hover {
             }
         });
 
-        // Ensure IDs are positive integers
         $('#memberId, #appointmentpetId').on('input', function () {
             if ($(this).val() < 1) {
                 $(this).val(1);
             }
         });
 
-        // Set the minimum date to today's date for date input
         let today = new Date().toISOString().split("T")[0];
         $("input[type='date']").attr("min", today);
 
-        // Show the modal when the "Open Modal" button is clicked
         $("#openModalBtn").click(function () {
             $("#orderModal").show();
         });
 
-        // Hide the modal when the close button or outside the modal is clicked
         $(".close-btn").click(function () {
             $("#orderModal").hide();
         });
@@ -383,7 +370,6 @@ button#openModalBtn:hover {
             }
         });
 
-        // Calculate total price based on selected services and checkboxes
         function calculateTotalPrice() {
             let total = 0;
             let servicePrice = parseInt($("#serviceSelect option:selected").data("price")) || 0;
@@ -394,11 +380,9 @@ button#openModalBtn:hover {
             $("#totalPrice").text("總價: " + total + "元");
         }
 
-        // Trigger price calculation when checkboxes or service select change
         $("input[type='checkbox'], #serviceSelect").change(calculateTotalPrice);
-        calculateTotalPrice();  // Initialize price calculation
+        calculateTotalPrice();  
 
-        // AJAX request for available booking times based on selected date
         $("#appointmentDate").on("change", function() {
             var selectedDate = $(this).val(); 
             console.log("選擇的日期是: " + selectedDate);
@@ -437,7 +421,6 @@ button#openModalBtn:hover {
             });
         });
 
-     // AJAX request for fetching pets based on selected member
         $("#memberId").on("change", function () {
             let memberId = $(this).val();
             let petSelect = $("#appointmentpetId");
@@ -457,12 +440,10 @@ button#openModalBtn:hover {
                         if (data.length > 0) {
                             $.each(data, function (index, pet) {
                                 console.log("🔍 取得的寵物資料:", pet);
-
                                 let petId = pet.petId ? parseInt(pet.petId, 10) : NaN;
                                 let petName = pet.petName || "";
 
                                 console.log("🔍 petId:", petId, "petName:", petName);
-
                                 if (!isNaN(petId) && petName) {
                                     petSelect.append('<option value="' + petId + '">' + petName + '</option>');
                                     if (index === 0) {
@@ -492,16 +473,16 @@ button#openModalBtn:hover {
                 });
             }
         });
+     
         $("#appointmentpetId").on("change", function() {
             let selectedPetId = $(this).val();
             console.log("当前选择的宠物 ID:", selectedPetId);  
-
             if (!selectedPetId) {
                 event.preventDefault();
                 alert("請選擇寵物！");
             }
         });
-        // Delete confirmation using SweetAlert
+        
         $(document).on("click", ".deletebtn", function () {
             let appointmentId = $(this).data("appointmentid");
             let form = $(this).closest("form");
@@ -524,7 +505,6 @@ button#openModalBtn:hover {
             });
         });
 
-        // Update confirmation using SweetAlert
         $(document).on("click", ".updatebtn", function () {
             let appointmentId = $(this).data("appointmentid");
             let form = $(this).closest("form");

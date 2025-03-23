@@ -35,12 +35,12 @@
 
         if (appointment == null) {
             request.setAttribute("errorMessage", "找不到該預約記錄");
-            request.getRequestDispatcher("/appointment/error/appointment.jsp").forward(request, response);
+            request.getRequestDispatcher("/appointment/error/Appointment.jsp").forward(request, response);
             return;
         }
 
         // 獲取 ItemDetails
-        itemdetails = userSession.get(ItemDetails.class, Integer.parseInt(appointmentId));
+        itemdetails = appointmentDAO.getServiceById(Integer.parseInt(appointmentId));
 
         // 取得額外服務包
         appointmentpackages = appointmentDAO.getSelectedExtraPackages(Integer.parseInt(appointmentId));
@@ -57,9 +57,6 @@
         return;
     }
 %>
-
-
-
 
 
 <!DOCTYPE html>

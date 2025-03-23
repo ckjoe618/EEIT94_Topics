@@ -6,6 +6,7 @@ import java.util.List;
 import com.topics.appointment.model.bean.Appointment;
 import com.topics.appointment.model.bean.ItemDetails;
 import com.topics.appointment.model.bean.Owner;
+import com.topics.appointment.model.bean.PackageDetails;
 import com.topics.appointment.model.bean.Pet;
 
 public interface IAppointmentDAO {
@@ -17,7 +18,7 @@ public interface IAppointmentDAO {
 	public boolean deleteAppointment(int appointmentId);
 	public List<Appointment> getAllAppointments();
 	public Appointment getAppointmentById(int appointmentId);
-	public boolean updateAppointment(Appointment appointment, List<Integer> serviceIds, List<Integer> extraPackageIds) throws SQLException;
+	public boolean updateAppointment(Appointment appointment, List<ItemDetails> itemDetails, List<PackageDetails> packageDetails);
 	public ItemDetails getServiceById(int appointmentId);
 	public List<String> getServicesByAppointmentId(int appointmentId);
 	public List<Integer> getSelectedExtraPackages(int appointmentId);

@@ -8,6 +8,7 @@ import org.hibernate.SessionFactory;
 
 import com.topics.appointment.model.bean.Appointment;
 import com.topics.appointment.model.bean.ItemDetails;
+import com.topics.appointment.model.bean.PackageDetails;
 import com.topics.appointment.model.dao.AppointmentDAO;
 
 public class AppointmentSERVICE implements IAppointmentSERVICE {
@@ -41,8 +42,8 @@ public class AppointmentSERVICE implements IAppointmentSERVICE {
 	public Appointment getAppointmentById(int appointmentId){
 		return appointmentDAO.getAppointmentById(appointmentId);
 	}
-	public boolean updateAppointment(Appointment appointment, List<Integer> serviceIds, List<Integer> extraPackageIds) throws SQLException {
-		return appointmentDAO.updateAppointment(appointment, serviceIds, extraPackageIds);
+	public boolean updateAppointment(Appointment appointment, List<ItemDetails> itemDetails, List<PackageDetails> packageDetails) {
+		return appointmentDAO.updateAppointment(appointment, itemDetails, packageDetails);
 	}
 	public ItemDetails getServiceById(int appointmentId){
 		return appointmentDAO.getServiceById(appointmentId);

@@ -184,20 +184,42 @@ public class AppointmentDAO implements IAppointmentDAO {
 
 
     // 刪除預約
-	@SuppressWarnings("deprecation")
 	@Override
-    public boolean deleteAppointment(int appointmentId) {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            Transaction transaction = session.beginTransaction();
-            Appointment appointment = session.get(Appointment.class, appointmentId);
-            session.delete(appointment);
-            transaction.commit();
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
+	public boolean deleteAppointment(int appointmentId) {
+	    Session session = HibernateUtil.getSessionFactory().openSession();
+	    Transaction transaction = null;
+
+	    try {
+	        transaction = session.beginTransaction();
+
+	        String deletePackagesHQL = "DELETE FROM PackageDetails p WHERE p.appointment.appointmentId = :appointmentId";
+	        Query deletePackagesQuery = session.createQuery(deletePackagesHQL);
+	        deletePackagesQuery.setParameter("appointmentId", appointmentId);
+	        deletePackagesQuery.executeUpdate();
+
+	        String deleteItemDetailsHQL = "DELETE FROM ItemDetails i WHERE i.appointment.appointmentId = :appointmentId";
+	        Query deleteItemDetailsQuery = session.createQuery(deleteItemDetailsHQL);
+	        deleteItemDetailsQuery.setParameter("appointmentId", appointmentId);
+	        deleteItemDetailsQuery.executeUpdate();
+
+	        Appointment appointment = session.get(Appointment.class, appointmentId);
+	        if (appointment != null) {
+	            session.delete(appointment);
+	        }
+
+	        transaction.commit();
+	        return true;
+	    } catch (Exception e) {
+	        if (transaction != null) {
+	            transaction.rollback();
+	        }
+	        e.printStackTrace();
+	        return false;
+	    } finally {
+	        session.close();
+	    }
+	}
+
 	
 	//全部資料
 	public List<Appointment> getAllAppointments() {
@@ -238,16 +260,11 @@ public class AppointmentDAO implements IAppointmentDAO {
 	            appointment.setServiceNames((String) row[8]);
 	            String additionalPackages = (String) row[9];
 	            appointment.setAdditionalPackages(StringUtils.isBlank(additionalPackages) ? "無加購服務" : additionalPackages);
-
-
 	            appointments.add(appointment);
 	        }
 	    }
-
 	    return appointments;
 	}
-
-
 
     // 根據 ID 查詢預約
 	@Override
@@ -256,6 +273,8 @@ public class AppointmentDAO implements IAppointmentDAO {
             return session.get(Appointment.class, appointmentId);
         }
     }
+	
+	//找MemberID
 	@Override
 	public Owner getOwnerById(int memberId) {
 	    try (Session session = HibernateUtil.getSessionFactory().openSession()) {
@@ -266,70 +285,70 @@ public class AppointmentDAO implements IAppointmentDAO {
 	    }
 	}
 	
+	//修改
 	@Override
-	public boolean updateAppointment(Appointment appointment, List<Integer> serviceIds, List<Integer> extraPackageIds) {
-	    Transaction transaction = null;
-	    try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-	        transaction = session.beginTransaction();
+	public boolean updateAppointment(Appointment appointment, List<ItemDetails> itemDetails, List<PackageDetails> packageDetails) {
+	    Session session = sessionFactory.getCurrentSession();
+	    try {
+	        session.beginTransaction();
 
-	        // 更新預約資料
-	        session.update(appointment);
+	        String uphql = "UPDATE Appointment a SET a.appointmentDate = :appointmentDate, a.appointmentTimeslot = :appointmentTimeslot, " +
+	                       "a.appointmentTotal = :appointmentTotal, a.appointmentStatus = :appointmentStatus, a.paymentStatus = :paymentStatus " +
+	                       "WHERE a.appointmentId = :appointmentId";
+	        Query query = session.createQuery(uphql);
+	        query.setParameter("appointmentDate", appointment.getAppointmentDate());
+	        query.setParameter("appointmentTimeslot", appointment.getAppointmentTimeslot());
+	        query.setParameter("appointmentTotal", appointment.getAppointmentTotal());
+	        query.setParameter("appointmentStatus", appointment.getAppointmentStatus());
+	        query.setParameter("paymentStatus", appointment.getPaymentStatus());
+	        query.setParameter("appointmentId", appointment.getAppointmentId());
 
-	        // 刪除相關的服務
-	        Query deleteServicesQuery = session.createQuery("DELETE FROM ItemDetails WHERE appointment.id = :appointmentId");
+	        int result = query.executeUpdate();
+
+	        String deleteServicesHQL = "DELETE FROM ItemDetails i WHERE i.appointment.appointmentId = :appointmentId";
+	        Query deleteServicesQuery = session.createQuery(deleteServicesHQL);
 	        deleteServicesQuery.setParameter("appointmentId", appointment.getAppointmentId());
 	        deleteServicesQuery.executeUpdate();
 
-	        // 刪除相關的套餐
-	        Query deletePackagesQuery = session.createQuery("DELETE FROM PackageDetails WHERE appointment.id = :appointmentId");
+	        if (itemDetails != null) {
+	            for (ItemDetails itemDetail : itemDetails) {
+	                Items item = session.get(Items.class, itemDetail.getItemId());  
+	                if (item != null) {
+	                    itemDetail.setAppointment(appointment);  
+	                    itemDetail.setItem(item);  
+	                    session.saveOrUpdate(itemDetail);  
+	                }
+	            }
+	        }
+
+	        String deletePackagesHQL = "DELETE FROM PackageDetails p WHERE p.appointment.appointmentId = :appointmentId";
+	        Query deletePackagesQuery = session.createQuery(deletePackagesHQL);
 	        deletePackagesQuery.setParameter("appointmentId", appointment.getAppointmentId());
 	        deletePackagesQuery.executeUpdate();
-
-	     // 新增服務
-	        if (serviceIds != null) {
-	            for (int serviceId : serviceIds) {
-	                // 加載相應的 Item 實體
-	                Items item = session.get(Items.class, serviceId);  // Get the Items object using serviceId
-	                if (item != null) {
-	                    ItemDetails itemDetails = new ItemDetails();
-	                    itemDetails.setAppointment(appointment);  // 設定關聯
-	                    itemDetails.setItem(item);  // 設定服務
-	                    itemDetails.setItemDetailQuantity(1);  // 設定數量
-	                    session.save(itemDetails);  // 保存服務
+	        
+	        if (packageDetails != null) {
+	            for (PackageDetails packageDetail : packageDetails) {
+	                ServicePackage pkg = session.get(ServicePackage.class, packageDetail.getPackageId());
+	                if (pkg != null) {
+	                    packageDetail.setAppointment(appointment);
+	                    packageDetail.setServicePackage(pkg); 
+	                    session.saveOrUpdate(packageDetail);  
 	                }
 	            }
 	        }
 
-	     // 新增套餐
-	        if (extraPackageIds != null) {
-	            for (int packageId : extraPackageIds) {
-	                // 加載相應的 ServicePackage 實體
-	                ServicePackage servicePackage = session.get(ServicePackage.class, packageId);  // Get the ServicePackage object
-	                if (servicePackage != null) {
-	                    PackageDetails packageDetails = new PackageDetails();
-	                    packageDetails.setAppointment(appointment);  // 設定關聯
-	                    packageDetails.setServicePackage(servicePackage);  // 設定套餐
-	                    packageDetails.setPackageDetailsQuantity(1);   // 設定數量
-	                    session.save(packageDetails);  // 保存套餐
-	                }
-	            }
-	        }
+	        session.getTransaction().commit();
 
-
-	        transaction.commit();  // 提交交易
-
-	        return true;  // 更新成功
+	        return result > 0;  
 	    } catch (Exception e) {
-	        if (transaction != null) {
-	            transaction.rollback();  // 回滾交易
+	        if (session.getTransaction() != null) {
+	            session.getTransaction().rollback();
 	        }
 	        e.printStackTrace();
-	        return false;  // 發生錯誤
+	        return false;
 	    }
 	}
 
-
-    
     //取得服務預約號ID
 	@Override
     public ItemDetails getServiceById(int appointmentId) {
@@ -349,7 +368,8 @@ public class AppointmentDAO implements IAppointmentDAO {
     public List<String> getServicesByAppointmentId(int appointmentId) {
         List<String> serviceNames = new ArrayList<>();
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            String hql = "SELECT i.itemName FROM ItemDetails id JOIN id.item i WHERE id.appointmentId = :appointmentId";
+        	String hql = "SELECT i.itemName FROM ItemDetails id JOIN id.item i WHERE id.appointment.appointmentId = :appointmentId";
+
             Query<String> query = session.createQuery(hql, String.class);
             query.setParameter("appointmentId", appointmentId);
             serviceNames = query.list();
@@ -400,7 +420,7 @@ public class AppointmentDAO implements IAppointmentDAO {
 	    try {
 	        session = HibernateUtil.getSessionFactory().openSession();
 	        Query<String> query = session.createQuery(
-	            "SELECT a.timeSlot FROM Appointment a WHERE a.appointmentDate = :date", String.class);
+	            "SELECT a.appointmentTimeslot FROM Appointment a WHERE a.appointmentDate = :date", String.class);
 	        query.setParameter("date", appointmentDate);
 	        bookedTimeslots = query.getResultList();
 	    } catch (Exception e) {

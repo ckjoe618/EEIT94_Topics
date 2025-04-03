@@ -42,37 +42,37 @@
 		<form action="OrderServlet" method="post" id="form"  onsubmit="return confirm('確認修改？')">
 		
 		<table>
-			<tr><td>訂單編號：<td><input type="text" name="orderid" readonly value="<%= odb.getOrderid() %>">
-			<tr><td>會員編號：<td><input type="text" name="memberid" value="<%= odb.getMemberid() %>" id="memberid" required><td><span id=mbMsg class="Msg"></span>
-			<tr><td>訂單金額：<td><input type="text" name="totalprice" value="<%= odb.getPricetotal() %>" id="totalprice" required><td><span id=ttpMsg class="Msg"></span>
-			<tr><td>交易時間：<td><input type="text" name="transactiontime" readonly value="<%= odb.getTransactiontime() %>">
+			<tr><td>訂單編號：<td><input type="text" name="orderid" readonly value="<%= odb.getOrderId() %>">
+			<tr><td>會員編號：<td><input type="text" name="memberid" value="<%= odb.getMemberId() %>" id="memberid" required><td><span id=mbMsg class="Msg"></span>
+			<tr><td>訂單金額：<td><input type="text" name="totalprice" value="<%= odb.getPriceTotal() %>" id="totalprice" required><td><span id=ttpMsg class="Msg"></span>
+			<tr><td>交易時間：<td><input type="text" name="transactiontime" readonly value="<%= odb.getTransactionTime() %>">
 			<tr><td>訂單狀態：
 				<td><select id="orderstatus" name="orderstatus">
-    					<option value="訂單已成立" <%= "訂單已成立".equals(odb.getOrderstatus()) ? "selected" : "" %>>訂單已成立</option>
-            			<option value="備貨中" <%= "備貨中".equals(odb.getOrderstatus()) ? "selected" : "" %>>備貨中</option>
-            			<option value="已出貨" <%= "已出貨".equals(odb.getOrderstatus()) ? "selected" : "" %>>已出貨</option>
-            			<option value="已送達" <%= "已送達".equals(odb.getOrderstatus()) ? "selected" : "" %>>已送達</option>
-            			<option value="退貨中" <%= "退貨中".equals(odb.getOrderstatus()) ? "selected" : "" %>>退貨中</option>
-            			<option value="退貨完成" <%= "退貨完成".equals(odb.getOrderstatus()) ? "selected" : "" %>>退貨完成</option>
-            			<option value="訂單取消" <%= "訂單取消".equals(odb.getOrderstatus()) ? "selected" : "" %>>訂單取消</option></select>
+    					<option value="訂單已成立" <%= "訂單已成立".equals(odb.getOrderStatus()) ? "selected" : "" %>>訂單已成立</option>
+            			<option value="備貨中" <%= "備貨中".equals(odb.getOrderStatus()) ? "selected" : "" %>>備貨中</option>
+            			<option value="已出貨" <%= "已出貨".equals(odb.getOrderStatus()) ? "selected" : "" %>>已出貨</option>
+            			<option value="已送達" <%= "已送達".equals(odb.getOrderStatus()) ? "selected" : "" %>>已送達</option>
+            			<option value="退貨中" <%= "退貨中".equals(odb.getOrderStatus()) ? "selected" : "" %>>退貨中</option>
+            			<option value="退貨完成" <%= "退貨完成".equals(odb.getOrderStatus()) ? "selected" : "" %>>退貨完成</option>
+            			<option value="訂單取消" <%= "訂單取消".equals(odb.getOrderStatus()) ? "selected" : "" %>>訂單取消</option></select>
 			<tr><td>取貨方式：
 				<td><label><input type="radio" name="pickupmethod" value="宅配"
-						<%= "宅配".equals(odb.getPickupmethod()) ? "checked" : "" %>> 宅配 </label>
+						<%= "宅配".equals(odb.getPickupMethod()) ? "checked" : "" %>> 宅配 </label>
 					<label><input type="radio" name="pickupmethod" value="超商取貨"
-						<%= "超商取貨".equals(odb.getPickupmethod()) ? "checked" : "" %>> 超商取貨 </label>
+						<%= "超商取貨".equals(odb.getPickupMethod()) ? "checked" : "" %>> 超商取貨 </label>
 			<tr><td>付款方式：
 				<td><label><input type="radio" name="paymentmethod" value="信用卡"
-						<%= "信用卡".equals(odb.getPaymentmethod()) ? "checked" : "" %>> 信用卡</label>
+						<%= "信用卡".equals(odb.getPaymentMethod()) ? "checked" : "" %>> 信用卡</label>
 					<label><input type="radio" name="paymentmethod" value="貨到付款"
-						<%= "貨到付款".equals(odb.getPaymentmethod()) ? "checked" : "" %>> 貨到付款</label>
+						<%= "貨到付款".equals(odb.getPaymentMethod()) ? "checked" : "" %>> 貨到付款</label>
 			<tr><td>付款狀態：
 				<td><select id="paymentstatus" name="paymentstatus">
-						<option value="待付款" <%= "待付款".equals(odb.getPaymentstatus()) ? "selected" : "" %>>待付款</option>
-    					<option value="已付款" <%= "已付款".equals(odb.getPaymentstatus()) ? "selected" : "" %>>已付款</option>
-    					<option value="付款失敗" <%= "付款失敗".equals(odb.getPaymentstatus()) ? "selected" : "" %>>付款失敗</option></select>
-			<tr><td>物流編號：<td><input type="text" name="trackingno" value="<%= odb.getTrackingnum()!=null?odb.getTrackingnum():"" %>"
+						<option value="待付款" <%= "待付款".equals(odb.getPaymentStatus()) ? "selected" : "" %>>待付款</option>
+    					<option value="已付款" <%= "已付款".equals(odb.getPaymentStatus()) ? "selected" : "" %>>已付款</option>
+    					<option value="付款失敗" <%= "付款失敗".equals(odb.getPaymentStatus()) ? "selected" : "" %>>付款失敗</option></select>
+			<tr><td>物流編號：<td><input type="text" name="trackingno" value="<%= odb.getTrackingNum()!=null?odb.getTrackingNum():"" %>"
 										id="trackingno"><td><span id=trckMsg class="Msg"></span>
-			<tr><td>更新時間：<td><input type="text" name="shipmentupdatetime" readonly value="<%= odb.getUpdatetime() %>">
+			<tr><td>更新時間：<td><input type="text" name="shipmentupdatetime" readonly value="<%= odb.getUpdateTime() %>">
 		
 			<tr><td colspan="2" style="text-align: center;padding: 20px;">
 						<input type="hidden" value="update" name="action"/>

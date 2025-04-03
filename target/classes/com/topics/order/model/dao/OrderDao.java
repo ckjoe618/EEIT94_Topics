@@ -87,15 +87,15 @@ public class OrderDao implements OrderDaoInterface {
 			String paymentStatus, String orderStatus, String pickupMethod, String trackingNum, Timestamp UpdateTime) {
 		OrderBean orderBean = session.get(OrderBean.class, orderId);
 		if (orderBean != null) {
-			orderBean.setMemberid(memberId);
-			orderBean.setPricetotal(priceTotal);
-			orderBean.setTransactiontime(transactionTime);
-			orderBean.setPaymentmethod(paymentMethod);
-			orderBean.setPaymentstatus(paymentStatus);
-			orderBean.setOrderstatus(orderStatus);
-			orderBean.setPickupmethod(pickupMethod);
-			orderBean.setTrackingnum(trackingNum);;
-			orderBean.setUpdatetime(UpdateTime);;
+			orderBean.setMemberId(memberId);
+			orderBean.setPriceTotal(priceTotal);
+			orderBean.setTransactionTime(transactionTime);
+			orderBean.setPaymentMethod(paymentMethod);
+			orderBean.setPaymentStatus(paymentStatus);
+			orderBean.setOrderStatus(orderStatus);
+			orderBean.setPickupMethod(pickupMethod);
+			orderBean.setTrackingNum(trackingNum);;
+			orderBean.setUpdateTime(UpdateTime);;
 		}
 	};
 

@@ -73,27 +73,29 @@
 		<tr style="background-color:#BEBEBE">
 			<th>訂單編號<th>會員編號<th>訂單金額<th>交易時間<th>付款方式<th>付款狀態<th>訂單狀態<th>取貨方式
 				<th>物流編號<th>更新時間<th>明細<th>修改<th>刪除
-			<% List<OrderBean> orders = (ArrayList<OrderBean>)request.getAttribute("orders");
-			for(OrderBean order : orders){ %>
-				<tr><td><%= order.getOrderid() %>
-				<td><%= order.getMemberid() %>
-				<td><%= order.getPricetotal() %>
-				<td><%= order.getTransactiontime() %>
-				<td><%= order.getPaymentmethod() %>
-				<td><%= order.getPaymentstatus() %>
-				<td><%= order.getOrderstatus() %>
-				<td><%= order.getPickupmethod() %>
-				<td><%= order.getTrackingnum() != null ? order.getTrackingnum() : "" %>
-				<td><%= order.getUpdatetime() %>
+			<%
+			List<OrderBean> orders = (ArrayList<OrderBean>)request.getAttribute("orders");
+					for(OrderBean order : orders){
+			%>
+				<tr><td><%= order.getOrderId() %>
+				<td><%= order.getMemberId() %>
+				<td><%= order.getPriceTotal() %>
+				<td><%= order.getTransactionTime() %>
+				<td><%= order.getPaymentMethod() %>
+				<td><%= order.getPaymentStatus() %>
+				<td><%= order.getOrderStatus() %>
+				<td><%= order.getPickupMethod() %>
+				<td><%= order.getTrackingNum() != null ? order.getTrackingNum() : "" %>
+				<td><%= order.getUpdateTime() %>
 				<td><button class="insidebtn">查看</button>
 				<td><form action="OrderServlet" method="POST">
-        				<input type="hidden" value="<%= order.getOrderid() %>" name="orderid">
+        				<input type="hidden" value="<%= order.getOrderId() %>" name="orderid">
         				<input type="hidden" value="getOrder" name="action"/>
        	 				<button class="insidebtn" type="submit">修改</button>
     				</form>
 				</td>
 				<td><form id="deleteForm" action="OrderServlet" method="POST" onsubmit="return confirm('確定要刪除此訂單嗎？')">
-        				<input type="hidden" value="<%= order.getOrderid() %>" name="orderid">
+        				<input type="hidden" value="<%= order.getOrderId() %>" name="orderid">
         				<input type="hidden" value="delete" name="action"/>
        	 				<button class="insidebtn" type="submit" >刪除</button>
     				</form>

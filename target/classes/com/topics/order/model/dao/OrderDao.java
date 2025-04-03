@@ -83,19 +83,18 @@ public class OrderDao implements OrderDaoInterface {
 		return session.get(OrderBean.class, orderId);
 	};
 	@Override
-	public void updateOrderByOrderId(Integer orderId, Integer memberId, Integer priceTotal, Timestamp transactionTime, String paymentMethod, 
-			String paymentStatus, String orderStatus, String pickupMethod, String trackingNum, Timestamp UpdateTime) {
-		OrderBean orderBean = session.get(OrderBean.class, orderId);
+	public void updateOrderByOrderId(OrderBean orderBean) {
+		OrderBean order = session.get(OrderBean.class, orderBean.getOrderId());
 		if (orderBean != null) {
-			orderBean.setMemberId(memberId);
-			orderBean.setPriceTotal(priceTotal);
-			orderBean.setTransactionTime(transactionTime);
-			orderBean.setPaymentMethod(paymentMethod);
-			orderBean.setPaymentStatus(paymentStatus);
-			orderBean.setOrderStatus(orderStatus);
-			orderBean.setPickupMethod(pickupMethod);
-			orderBean.setTrackingNum(trackingNum);;
-			orderBean.setUpdateTime(UpdateTime);;
+			order.setMemberId(orderBean.getMemberId());
+			order.setPriceTotal(orderBean.getPriceTotal());
+			order.setTransactionTime(orderBean.getTransactionTime());
+			order.setPaymentMethod(orderBean.getPaymentMethod());
+			order.setPaymentStatus(orderBean.getPaymentStatus());
+			order.setOrderStatus(orderBean.getOrderStatus());
+			order.setPickupMethod(orderBean.getPickupMethod());
+			order.setTrackingNum(orderBean.getTrackingNum());
+			order.setUpdateTime(orderBean.getUpdateTime());
 		}
 	};
 

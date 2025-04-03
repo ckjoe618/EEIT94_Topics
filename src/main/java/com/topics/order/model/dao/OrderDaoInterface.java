@@ -1,6 +1,5 @@
 package com.topics.order.model.dao;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 import com.topics.order.model.bean.OrderBean;
@@ -22,7 +21,6 @@ public interface OrderDaoInterface {
 	
 	//修改
 	public OrderBean findOrderByOrderId(Integer orderId);
-	public void updateOrderByOrderId(Integer orderId, Integer memberId, Integer priceTotal, Timestamp transactionTime, String paymentMethod, 
-			String paymentStatus, String orderStatus, String pickupMethod, String trackingNum, Timestamp UpdateTime);
+	public void updateOrderByOrderId(OrderBean orderBean);
 
 }
